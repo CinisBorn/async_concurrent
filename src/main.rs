@@ -22,7 +22,7 @@ fn main() {
     trpl::block_on(async {
         let (tx, mut rx) = trpl::channel();
         
-        let op1 = async { 
+        let op1 = async move { 
             let vals = vec![
                 String::from("hi"),
                 String::from("from"),
