@@ -21,21 +21,28 @@ fn main() {
     
     trpl::block_on(async {
         let (tx, mut rx) = trpl::channel();
-        let vals = vec![
-            String::from("hi"),
-            String::from("from"),
-            String::from("the"),
-            String::from("future"),
-        ];
-
-        for val in vals {
-            tx.send(val).unwrap();
-            trpl::sleep(Duration::from_millis(500)).await;
-        }
         
-        while let Some(message) = rx.recv().await {
-            println!("Current message: {}", message);
+        let op1 = async { 
+            let vals = vec![
+                String::from("hi"),
+                String::from("from"),
+                String::from("the"),
+                String::from("future"),
+            ];
+    
+            for val in vals {
+                tx.send(val).unwrap();
+                trpl::sleep(Duration::from_millis(500)).await;
+            }
         };
+        
+        let op2 = async {
+            while let Some(message) = rx.recv().await {
+                println!("Current message: {}", message);
+            };
+        };
+        
+        trpl::join(op1, op2).await;
     });
     
     println!("Program Finished!");
