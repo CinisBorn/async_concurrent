@@ -17,5 +17,26 @@ fn main() {
         });
         
         trpl::join(handle, handle2).await;
-    })
+    });
+    
+    trpl::block_on(async {
+        let (tx, mut rx) = trpl::channel();
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("the"),
+            String::from("future"),
+        ];
+
+        for val in vals {
+            tx.send(val).unwrap();
+            trpl::sleep(Duration::from_millis(500)).await;
+        }
+        
+        while let Some(message) = rx.recv().await {
+            println!("Current message: {}", message);
+        };
+    });
+    
+    println!("Program Finished!");
 }
